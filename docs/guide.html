@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tom.js Example Page</title>
+
+  <link rel="stylesheet" type="text/css" href="http://ink.github.io/codeblock.js/stylesheets/codeblock.css">
+  <script type="text/javascript" src="../soundmanager2/script/soundmanager2.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="../resolvers/soundcloud.js"></script>
+  <script type="text/javascript" src="../tom.js"></script>
+
+  <style type="text/css">
+  body {
+    font-family: Ubuntu;
+    color: #111;
+  }
+  .container {
+    margin: auto;
+    width: 720px;
+  }
+
+  </style>
+
+  <div class="container">
+    <h1>Tom.js: Guide & Examples</h1>
+
+    <h2>Setting Up Tom.js</h2>
+
+    <p>In order to play the sounds, Tom.js requires <a href="">SoundManager2</a> to already be initialised. After Including the JavaScript source, SoundManager must be setup by using the following codeblock:</p>
+
+    <div class="codeblock codeblock-norun">
+soundManager.setup({
+  url:'soundmanager2/swf',
+  onready: function() {
+    // Once this function's called, we can create a Tom.js instance.
+  },
+  debugMode: false
+});</div>
+
+<p>Now on the soundManager onready call, Tom.js and the resolvers can be initialized with the following.</p>
+<div class="codeblock codeblock-norun">
+// Create Tom Instance
+var tom = new Tom();
+
+// Register Resolvers
+// (These resolvers can be found in /resolvers in the repository)
+tom.registerResolver('soundcloud', new SoundcloudResolver('SOUNDCLOUD_KEY'));
+tom.registerResolver('ex.fm', new ExfmResolver('EX_FM_KEY'));
+</div>
+
+
+    <h2>Resolving and Playing</h2>
+
+    <div class="codeblock codeblock-run">var track = new tom.Track('Newton Faulkner', 'Let\'s Get Together');
+track.resolve(function(err, results) {
+  if(err) return console.error(err);
+  track.play();
+});</div>
+
+</div>
+</head>
+<body>
+  <script type="text/javascript">
+
+  // Setup SoundManager
+  soundManager.setup({
+    url:'../soundmanager2/swf',
+    onready: setupTom,
+    debugMode: false
+  });
+
+  function setupTom() {
+
+    tom = new Tom();
+
+    tom.registerResolver('soundcloud', new SoundcloudResolver('JoiPPk8CcQw27aLSGJaBg'));
+
+    $('#playform').submit(function() {
+      console.log('submit');
+      var track = new tom.Track($('#artist')[0].value, $('#track')[0].value);
+      track.resolve(function(err, results) {
+        track.play();
+      });
+      return false;
+    });
+  }
+
+  </script>
+
+  
+
+  <script src="http://ink.github.io/codeblock.js/javascripts/ace.js"></script>
+  <script src="http://ink.github.io/codeblock.js/javascripts/codeblock.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  $(function(){
+    $(".codeblock-run").codeblock({runnable: true});
+    $(".codeblock-norun").codeblock({runnable: false, consoleText:''});
+});</script>
+
+
+</body>
+</html>
