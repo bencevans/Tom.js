@@ -1,0 +1,15 @@
+{
+  "name": "Tom.js",
+  "repo": "bencevans/Tom.js",
+  "description": "Multi Source Music Player",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "main": "tom.js",
+  "scripts": [
+    "tom.js",
+    "resolvers/soundcloud.js"
+  ]
+}

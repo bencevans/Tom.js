@@ -17,8 +17,14 @@ if (freeGlobal.global === freeGlobal) {
  * Check for dependencies
  */
 
-if(typeof soundManager == 'undefined')
-  throw new Error('Tom requires SoundManager2 (http://www.schillmania.com/projects/soundmanager2/)');
+if(typeof soundManager == 'undefined') {
+  if(require) {
+    var $ = require('uniba/sound-manager-2');
+  } else {
+    throw new Error('Tom requires SoundManager2 (http://www.schillmania.com/projects/soundmanager2/)');
+  }
+}
+
 
 /**
  * Tom
