@@ -1,35 +1,27 @@
 
-describe('tom.js', function(){
-  var tom;
+describe('Tom.js', function(){
+  var Tom, tom;
 
   before(function(){
-    soundManager.setup({
-      url:'../soundmanager2/swf/'
-    });
-    tom = new Tom();
-  });
 
-  describe('search() by querysting', function(){
-    it('respond with an appropriate object', function(done) {
-      tom.search('Let\'s Get Together', function(error, results) {
-        ({
-          tracks: [{
-            title: 'Let\'s Get Together',
-            artist: 'Newton Faulkner',
-            album: 'Hand Built By Robots'
-          }],
-          artists: [],
-          albums: []
-        }).should().equal(results);
-      });
-    });
+    Tom = require('Tom.js');
+    tom = new Tom();
+
+    tom.registerResolver('dummy', new Tom.resolvers.dummy());
+
   });
 
   describe('search() for track', function(){
-    tom.search('Let\'s Get Together', function() {
 
-    })
-    it('respond with an appropriate object');
+    it('should return null err & array of results', function(done) {
+
+      var track = new tom.Track('Newton Faulkner', 'Let\'s Get Together');
+      track.resolve(function(err, results) {
+        assert.equal(null, err);
+        assert.ok(Array.isArray(results));
+        done();
+      });
+    });
   });
 
   describe('search() for album', function(){

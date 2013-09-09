@@ -1,49 +1,42 @@
-(function(root){
-
-// Detect free variables `exports`
-var freeExports = typeof exports == 'object' && exports;
-
-// Detect free variable `module`
-var freeModule = typeof module == 'object' && module &&
-  module.exports == freeExports && module;
-
-// Detect free variable `global` and use it as `root`
-var freeGlobal = typeof global == 'object' && global;
-if (freeGlobal.global === freeGlobal) {
-  root = freeGlobal;
-}
 
 /**
- * Check for dependencies
+ * Module Dependencies
  */
 
-if(typeof soundManager == 'undefined') {
-  if(require) {
-    var $ = require('uniba/sound-manager-2');
-  } else {
-    throw new Error('Tom requires SoundManager2 (http://www.schillmania.com/projects/soundmanager2/)');
-  }
-}
+var Emitter = require('emitter');
 
+var resolvers = {
+  soundcloud: require('./resolvers/soundcloud'),
+  dummy: require('./resolvers/dummy')
+};
 
 /**
  * Tom
  * @param  {Object} options
  * @return {Tom}
+ *
+ * @Events
+ *   'play', 'pause', 'stop', 'track'
  */
 var Tom = function(options) {
   var tom = this;
 
   this.currentTrack = null;
   this.trackQueue = [];
+
+  if(!soundManager) throw new Error('Sound Manager2 Required');
   this.soundManager = soundManager;
   this.resolvers = {};
 
-  this.onTrack;
-  this.onStop;
-  this.onPlay;
-  this.onPause;
-  this.onError;
+  this.onTrack = false;
+  this.onStop = false;
+  this.onPlay = false;
+  this.onPause = false;
+  this.onError = false;
+
+  this.track = function(a, b, c) {
+    return new Track(a, b, c);
+  };
 
   var Track = this.Track = function(options) {
 
@@ -66,6 +59,7 @@ var Tom = function(options) {
 
   Track.prototype.resolve = function(callback) {
     console.log('Track.resolve()');
+
     var track = this;
     return tom.resolve(this, function(err, results) {
       this.sources = results;
@@ -80,6 +74,8 @@ var Tom = function(options) {
 
   return this;
 };
+
+Emitter(Tom.prototype);
 
 /**
  * Search
@@ -118,13 +114,14 @@ var Tom = function(options) {
   console.log('Tom.resolve(track, callback)');
   var resolvers = Object.keys(this.resolvers);
   var results = [];
+
   for (var i = 0; i < resolvers.length; i++) {
     this.resolvers[resolvers[i]].resolve(track, function(err, moreResults) {
       moreResults = moreResults || [];
       for (var o = 0; o < moreResults.length; o++) {
         results.push(moreResults[o]);
       }
-      if(i === resolvers.length) {
+      if(i === resolvers.length - 1) {
         track.results = results;
         callback(null, results);
       }
@@ -165,26 +162,15 @@ Tom.prototype.registerResolver = function(name, resolver) {
   this.resolvers[name] = resolver;
 };
 
-// Some AMD build optimizers, like r.js, check for specific condition patterns
-// like the following:
-if (
-  typeof define == 'function' &&
-  typeof define.amd == 'object' &&
-  define.amd
-) {
-  define(function() {
-    return Tom;
-  });
-} else if (freeExports && !freeExports.nodeType) {
-  if (freeModule) { // in Node.js or RingoJS v0.8.0+
-    freeModule.exports = Tom;
-  } else { // in Narwhal or RingoJS v0.7.0-
-    for (var key in Tom) {
-      Tom.hasOwnProperty(key) && (freeExports[key] = Tom[key]);
-    }
-  }
-} else { // in Rhino or a web browser
-  root.Tom = Tom;
+Tom.prototype.use = function(name, options) {
+  console.log('Tom.use(name, options)');
+  this.registerResolver(name, new resolvers[name](options));
+};
+
+function createInstance() {
+  return new Tom(arguments[0]);
 }
 
-})(this);
+module.exports = createInstance;
+module.exports.Tom = Tom;
+module.exports.resolvers = resolvers;

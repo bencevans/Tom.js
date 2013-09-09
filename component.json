@@ -4,12 +4,17 @@
   "description": "Multi Source Music Player",
   "version": "0.0.1",
   "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "uniba/sound-manager-2": "*",
+    "component/emitter": "*",
+    "component/jquery": "*"
+  },
   "development": {},
   "license": "MIT",
   "main": "tom.js",
   "scripts": [
     "tom.js",
-    "resolvers/soundcloud.js"
+    "resolvers/soundcloud.js",
+    "resolvers/dummy.js"
   ]
 }

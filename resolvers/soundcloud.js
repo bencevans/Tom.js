@@ -1,9 +1,15 @@
 
 /**
+ * Module Dependencies
+ */
+
+var $ = require('jquery');
+
+/**
  * Tom.js SoundCloud Resolver
  */
 
-var SoundcloudResolver = function(options) {
+module.exports = function(options) {
   if(typeof options == 'string') options = { CLIENT_ID: options };
 
   this.options = options;
@@ -13,7 +19,7 @@ var SoundcloudResolver = function(options) {
   function parseSongResponse (track) {
     if(Array.isArray(track)) return track.map(parseSongResponse);
 
-    var result = new Object();
+    var result = {};
 
     result.title = track.title;
     result.artist = track.user.username;
@@ -28,18 +34,18 @@ var SoundcloudResolver = function(options) {
     result.score = 0.95;
     return result;
 
-  };
+  }
 
   this.search = function(query, callback) {
     $.getJSON('http://api.soundcloud.com/tracks.json?q=' + query + '&client_id=' + soundcloudResolver.options.CLIENT_ID, function(data) {
       if(data && data.errors) return callback(new Error(JSON.stringify(data)));
       callback(null, parseSongResponse(data));
     });
-  }
+  };
 
   this.resolve = function(query, callback) {
     this.search(query.artist + ' - ' + query.title, callback);
-  }
+  };
 
   return this;
-}
+};

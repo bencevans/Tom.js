@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Resolve and Play</title>
+  <script type="text/javascript" src="/soundmanager2/script/soundmanager2.js"></script>
+  <script type="text/javascript" src="/build/build.js"></script>
+  <script type="text/javascript">
+  soundManager.setup({
+    url: '/soundmanager2/swf',
+    onready: function() {
+      var t   = document.createElement('script');
+      t.type  = 'text/javascript';
+      t.async = true;
+      t.src = '/examples/ResolveAndPlay/ResolveAndPlay.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(t, s);
+    }
+  });
+  </script>
+</head>
+<body>
+
+</body>
+</html>
