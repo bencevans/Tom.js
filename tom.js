@@ -121,12 +121,17 @@ Emitter(Tom.prototype);
   var results = [];
 
   for (var i = 0; i < resolvers.length; i++) {
+    console.log('1');
     this.resolvers[resolvers[i]].resolve(track, function(err, moreResults) {
+      console.log('cb1');
       moreResults = moreResults || [];
       for (var o = 0; o < moreResults.length; o++) {
+        console.log('o:', o);
         results.push(moreResults[o]);
       }
-      if(i === resolvers.length - 1) {
+      console.log('i:', i);
+      console.log('resolvers.length', resolvers.length);
+      if(i === resolvers.length) {
         track.results = results;
         callback(null, results);
       }
@@ -154,7 +159,26 @@ Emitter(Tom.prototype);
       autoplay: true
     });
     this.soundManager.stopAll();
+    this.emit('track', track);
+    track.sound.onplay  = function() {
+      tom.emit('play', track);
+    };
+    track.sound.onfinish  = function() {
+      tom.emit('finish', track);
+      track.sound.destruct();
+    };
+    track.sound.onpause  = function() {
+      tom.emit('pause', track);
+    };
+    track.sound.onresume  = function() {
+      tom.emit('pause', track);
+    };
+    track.sound.onstop  = function() {
+      tom.emit('stop', track);
+      track.sound.destruct();
+    };
     track.sound.play();
+    this.emit('play', track);
     this.currentTrack = track;
   } else {
     this.resolve(track);
