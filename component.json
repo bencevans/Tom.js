@@ -7,7 +7,8 @@
   "dependencies": {
     "uniba/sound-manager-2": "*",
     "component/emitter": "*",
-    "component/jquery": "*"
+    "component/jquery": "*",
+    "visionmedia/debug": "*"
   },
   "development": {},
   "license": "MIT",

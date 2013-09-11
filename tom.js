@@ -21,6 +21,8 @@ var resolvers = {
 var Tom = function(options) {
   var tom = this;
 
+  options = options || {};
+
   this.currentTrack = null;
   this.trackQueue = [];
 
@@ -33,6 +35,8 @@ var Tom = function(options) {
   this.onPlay = false;
   this.onPause = false;
   this.onError = false;
+
+  this.debug = options.debug || require('debug')('Tom.js');
 
   this.track = function(a, b, c) {
     return new Track(a, b, c);
@@ -58,7 +62,7 @@ var Tom = function(options) {
   };
 
   Track.prototype.resolve = function(callback) {
-    console.log('Track.resolve()');
+    if(typeof tom.debug === 'function') tom.debug('Track.resolve()');
 
     var track = this;
     return tom.resolve(this, function(err, results) {
@@ -68,7 +72,7 @@ var Tom = function(options) {
   };
 
   Track.prototype.play = function() {
-    console.log('Track.play()');
+    if(typeof tom.debug === 'function') tom.debug('Track.play()');
     return tom.play(this);
   };
 
@@ -92,6 +96,7 @@ Emitter(Tom.prototype);
  *                             }
  */
  Tom.prototype.search = function(options, callback) {
+  if(typeof tom.debug === 'function') tom.debug('Tom.search(options, callback)');
   if(typeof options == 'string') options = { query: options };
   callback(null, {
     artists: [],
@@ -111,7 +116,7 @@ Emitter(Tom.prototype);
  * @return {Array}
  */
  Tom.prototype.resolve = function(track, callback) {
-  console.log('Tom.resolve(track, callback)');
+  if(typeof this.debug === 'function') this.debug('Tom.resolve(track, callback)');
   var resolvers = Object.keys(this.resolvers);
   var results = [];
 
@@ -135,7 +140,8 @@ Emitter(Tom.prototype);
  * @return {[type]}         [description]
  */
  Tom.prototype.play = function(track) {
-  console.log('Tom.play(track)', track);
+  if(typeof this.debug === 'function') this.debug('Tom.play(track)', track);
+  var tom = this;
   // Already Resolved
   if(track.results) {
     track.sound = this.soundManager.createSound({
@@ -159,15 +165,18 @@ Emitter(Tom.prototype);
 };
 
 Tom.prototype.registerResolver = function(name, resolver) {
+  if(typeof this.debug === 'function') this.debug('registerResolver(name, resolver)');
   this.resolvers[name] = resolver;
 };
 
 Tom.prototype.use = function(name, options) {
-  console.log('Tom.use(name, options)');
+  this.debug('Tom.use(name, options)');
+  if(typeof this.debug === 'function') this.debug('Tom.use(name, options)');
   this.registerResolver(name, new resolvers[name](options));
 };
 
 function createInstance() {
+  if(typeof this.debug === 'function') this.debug('createInstance()');
   return new Tom(arguments[0]);
 }
 
