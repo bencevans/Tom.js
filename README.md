@@ -33,7 +33,8 @@ tom.on('error', function(error) {
   console.log('Tom Internal Error:', error);
 });
 
-tom.track('Newton Faulkner', 'Lullaby').resolve(function(err, results) {
+var track = tom.track('Newton Faulkner', 'Lullaby')
+track.resolve(function(err, results) {
   if(err) return alert('Damnnnnnnn');
   console.log('asd');
   track.play();
